@@ -1,5 +1,4 @@
-from db.database import CURSOR, CONN
-from models.article import Article
+from lib.db.connection import CURSOR, CONN
 
 class Author:
     def __init__(self, id, name):
@@ -21,11 +20,11 @@ class Author:
         return None
 
     def articles(self):
-        from models.article import Article
+        from lib.models.article import Article
         return Article.find_by_author_id(self.id)
 
     def magazines(self):
-        from models.magazine import Magazine
+        from lib.models.magazine import Magazine
         CURSOR.execute("""
             SELECT DISTINCT magazines.* FROM magazines
             JOIN articles ON articles.magazine_id = magazines.id
