@@ -1,45 +1,37 @@
-from lib.db.connection import get_connection
-from lib.models.article import Article
-from lib.models.magazine import Magazine
+from db.database import CURSOR, CONN
+from models.article import Article
 
 class Author:
-    def __init__(self, name, id=None):
+    def __init__(self, id, name):
         self.id = id
         self.name = name
 
-    def save(self):
-        conn = get_connection()
-        cursor = conn.cursor()
-        if self.id is None:
-            cursor.execute("INSERT INTO authors (name) VALUES (?)", (self.name,))
-            self.id = cursor.lastrowid
-        else:
-            cursor.execute("UPDATE authors SET name=? WHERE id=?", (self.name, self.id))
-        conn.commit()
-        conn.close()
+    @classmethod
+    def create(cls, name):
+        CURSOR.execute("INSERT INTO authors (name) VALUES (?)", (name,))
+        CONN.commit()
+        return cls(CURSOR.lastrowid, name)
+
+    @classmethod
+    def find_by_id(cls, id):
+        CURSOR.execute("SELECT * FROM authors WHERE id = ?", (id,))
+        row = CURSOR.fetchone()
+        if row:
+            return cls(*row)
+        return None
 
     def articles(self):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM articles WHERE author_id=?", (self.id,))
-        rows = cursor.fetchall()
-        return [Article(row['title'], row['author_id'], row['magazine_id'], row['id']) for row in rows]
+        from models.article import Article
+        return Article.find_by_author_id(self.id)
 
     def magazines(self):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT DISTINCT m.* FROM magazines m
-        JOIN articles a ON m.id = a.magazine_id
-        WHERE a.author_id = ?
+        from models.magazine import Magazine
+        CURSOR.execute("""
+            SELECT DISTINCT magazines.* FROM magazines
+            JOIN articles ON articles.magazine_id = magazines.id
+            WHERE articles.author_id = ?
         """, (self.id,))
-        rows = cursor.fetchall()
-        return [Magazine(row['name'], row['category'], row['id']) for row in rows]
+        return [Magazine(*row) for row in CURSOR.fetchall()]
 
-    def add_article(self, magazine, title):
-        article = Article(title, self.id, magazine.id)
-        article.save()
-        return article
-
-    def topic_areas(self):
-        return list(set([m.category for m in self.magazines()]))
+    def __repr__(self):
+        return f"<Author {self.name}>"
