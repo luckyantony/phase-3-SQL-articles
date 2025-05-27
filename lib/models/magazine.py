@@ -40,3 +40,10 @@ class Magazine:
 
     def __repr__(self):
         return f"<Magazine {self.name}>"
+
+    # ✅ Add these two methods to support proper comparison
+    def __eq__(self, other):
+        return isinstance(other, Magazine) and self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
