@@ -1,17 +1,19 @@
+from lib.db.seed import seed_data
+from lib.db.connection import CONN
 from lib.models.author import Author
 from lib.models.magazine import Magazine
-from lib.models.article import Article
+import os
 
-print("-- Debug session starting --")
+os.system("sqlite3 articles.db < lib/db/schema.sql")
+seed_data()
 
-a1 = Author("Test Author")
-a1.save()
+alice = Author.find_by_id(1)
+print(alice)
+print("Articles by Alice:", alice.articles())
+print("Magazines Alice wrote for:", alice.magazines())
 
-m1 = Magazine("Test Mag", "Science")
-m1.save()
-
-article = a1.add_article(m1, "Exploring Stars")
-print("Added article:", article.title)
-
-print("Author's magazines:", [m.name for m in a1.magazines()])
-print("Magazine contributors:", [a.name for a in m1.contributors()])
+mag = Magazine.find_by_id(1)
+print(mag)
+print("Articles in Mag:", mag.articles())
+print("Contributors:", mag.contributors())
+print("Titles:", mag.article_titles())
