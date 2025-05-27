@@ -25,11 +25,11 @@ class Author:
 
     def magazines(self):
         from lib.models.magazine import Magazine
-        CURSOR.execute("""
+        CURSOR.execute('''
             SELECT DISTINCT magazines.* FROM magazines
             JOIN articles ON articles.magazine_id = magazines.id
             WHERE articles.author_id = ?
-        """, (self.id,))
+        ''', (self.id,))
         return [Magazine(*row) for row in CURSOR.fetchall()]
 
     def __repr__(self):

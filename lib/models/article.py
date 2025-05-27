@@ -10,10 +10,10 @@ class Article:
 
     @classmethod
     def create(cls, title, content, author_id, magazine_id):
-        CURSOR.execute("""
+        CURSOR.execute('''
             INSERT INTO articles (title, content, author_id, magazine_id)
             VALUES (?, ?, ?, ?)
-        """, (title, content, author_id, magazine_id))
+        ''', (title, content, author_id, magazine_id))
         CONN.commit()
         return cls(CURSOR.lastrowid, title, content, author_id, magazine_id)
 

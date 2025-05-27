@@ -1,10 +1,10 @@
 from lib.models.article import Article
-
-def test_create_article():
-    article = Article.create("Test", "Content", 1, 1)
-    assert article.title == "Test"
+from lib.models.author import Author
+from lib.models.magazine import Magazine
 
 def test_article_relationships():
-    article = Article.create("Linked", "Content", 1, 1)
-    assert article.author().name
-    assert article.magazine().name
+    author = Author.create("Writer A")
+    mag = Magazine.create("News", "General")
+    article = Article.create("Headline", "News Body", author.id, mag.id)
+    assert article.author().id == author.id
+    assert article.magazine().id == mag.id

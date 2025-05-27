@@ -1,6 +1,6 @@
 from lib.models.author import Author
-from lib.models.magazine import Magazine
 from lib.models.article import Article
+from lib.models.magazine import Magazine
 
 def seed_data():
     author1 = Author.create("Alice Smith")
@@ -11,4 +11,4 @@ def seed_data():
 
     Article.create("The Rise of AI", "AI content", author1.id, mag1.id)
     Article.create("Staying Fit", "Health content", author2.id, mag2.id)
-    Article.create("AI in Medicine", "Combo content", author1.id, mag2.id)
+    Article.create("AI in Medicine", "Combination content", author1.id, mag2.id)

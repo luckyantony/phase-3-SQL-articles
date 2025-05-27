@@ -27,11 +27,11 @@ class Magazine:
 
     def contributors(self):
         from lib.models.author import Author
-        CURSOR.execute("""
+        CURSOR.execute('''
             SELECT DISTINCT authors.* FROM authors
             JOIN articles ON articles.author_id = authors.id
             WHERE articles.magazine_id = ?
-        """, (self.id,))
+        ''', (self.id,))
         return [Author(*row) for row in CURSOR.fetchall()]
 
     def article_titles(self):
